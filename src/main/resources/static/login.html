@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in — Warden</title>
+<link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+<div class="brand">
+  <div>
+    <div class="mark">Ward<em>en</em></div>
+    <h1>Your identity, verified.</h1>
+    <p class="tag">Sign in to continue to your account.</p>
+    <svg class="seal" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="52" fill="none" stroke="#c9a227" stroke-width="1.2" opacity="0.55"/>
+      <circle cx="60" cy="60" r="42" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.4"/>
+      <circle cx="60" cy="60" r="4" fill="#c9a227"/>
+      <g stroke="#c9a227" stroke-width="1" opacity="0.5">
+        <line x1="60" y1="8" x2="60" y2="18"/><line x1="60" y1="102" x2="60" y2="112"/>
+        <line x1="8" y1="60" x2="18" y2="60"/><line x1="102" y1="60" x2="112" y2="60"/>
+      </g>
+    </svg>
+  </div>
+  <div class="foot">Warden Auth</div>
+</div>
+
+<main>
+  <div class="box">
+    <h2>Welcome back</h2>
+    <div class="sub">Sign in with your email and password.</div>
+
+    <div class="field"><label>Email</label><input id="email" type="email" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div>
+    <button class="cta" id="submitBtn" onclick="login()">Sign in</button>
+    <div class="msg" id="msg"></div>
+
+    <div class="foot-links">
+      <div style="margin-bottom:6px;"><a href="reset-password.html">Forgot your password?</a></div>
+      <div>New here? <a href="register.html">Create an account</a></div>
+    </div>
+  </div>
+</main>
+
+<script src="js/auth.js"></script>
+<script>
+  async function login(){
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    const {ok, data} = await callAuthApi('/api/v1/auth/login', {email: v('email'), password: v('password')});
+    btn.disabled = false;
+    if (ok && data.accessToken){
+      localStorage.setItem('warden_jwt', data.accessToken);
+      setMsg('msg', true, 'Signed in as ' + (data.user ? data.user.email : v('email')) + '.');
+    } else {
+      setMsg('msg', false, data.message || 'That email or password didn\u2019t match.');
+    }
+  }
+  document.getElementById('password').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: user-auth-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: user_auth_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - user_auth_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d user_auth_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  user-auth-service:
+    build: .
+    container_name: user-auth-service
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: user_auth_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET:-please-change-this-to-a-long-random-secret-in-prod}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+    ports:
+      - "8080:8080"
+
+volumes:
+  user_auth_pgdata:
