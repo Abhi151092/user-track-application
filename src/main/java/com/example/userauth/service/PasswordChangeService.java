@@ -31,5 +31,6 @@ public class PasswordChangeService {
         userRepository.save(user);
 
         log.info("Password changed for user {}", user.getId());
+        log.info("Password changed successfully {}", user.getId());
     }
 }
