@@ -40,6 +40,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<ErrorResponse> handleTokenExpired(TokenExpiredException ex, HttpServletRequest request) {
+        log.error("User token has expired {}", request);
         return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
