@@ -58,6 +58,7 @@ public class GlobalExceptionHandler {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
                 .collect(Collectors.joining("; "));
+        log.error("Enable to authenticate user {}", request);
         return build(HttpStatus.BAD_REQUEST, message.isBlank() ? "Validation failed" : message, request);
     }
 
@@ -68,15 +69,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
-        log.info("User access denied {}", request);
         return build(HttpStatus.FORBIDDEN, "Access denied", request);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex, HttpServletRequest request) {
         log.error("Unhandled exception on path {}", request.getRequestURI(), ex);
-        log.info("Unhandled exception on path {}", request.getRequestURI(), ex);
-
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request);
     }
 
