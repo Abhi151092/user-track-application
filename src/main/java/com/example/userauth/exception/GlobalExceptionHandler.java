@@ -75,7 +75,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex, HttpServletRequest request) {
         log.error("Unhandled exception on path {}", request.getRequestURI(), ex);
-        log.info("Un-recognize error on path {}", request.getRequestURI(), ex);
+        log.info("Unhandled exception on path {}", request.getRequestURI(), ex);
+
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request);
     }
 
