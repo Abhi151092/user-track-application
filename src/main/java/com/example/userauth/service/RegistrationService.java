@@ -40,7 +40,7 @@ public class RegistrationService {
                 .build();
 
         User saved = userRepository.save(user);
-        log.info("New user registered with id {}", saved.getId());
+        log.info("A New user registered with id {}", saved.getId());
 
         return new RegisterResponse("User registered successfully", saved.getId());
     }
